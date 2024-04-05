@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+
+.container {
+    font-family: "Nunito", sans-serif;
+    position: relative;
+}
+
+.left-column {
+    background-color: #FFF0EE;
+    height: 100%;
+}
+
+.visible {
+    visibility: visible;
+    background-color: #FFF0EE;
+    width: 50%;
+    margin-left: 18rem;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.right-column {
+    padding: 2rem 4rem;
+}
+
+.textStyle {
+    color: red;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.form-sign-in {
+    padding: 2rem 4rem;
+}
