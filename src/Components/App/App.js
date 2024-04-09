@@ -1,17 +1,31 @@
 import "./App.css";
-import { BrowserRouter, Routes, Router, Route } from "react-router-dom";
-import LoginOld from "../Login/login-old";
-import Login from "../Login/login";
-import OTPverify from "../Login/OTPverification";
+import {
+  BrowserRouter,
+  Routes,
+  Router,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import LoginForm from "../Login/loginForm";
+import OTPverify from "../Login/OTPverify";
+import PrivateRouteOTPinput from "../PrivateRoute/privateRouteOTPinput";
+import RecoveryPassword from "../RecoveryPassword/recoveryPassword";
+import OTPrecovery from "../RecoveryPassword/OTPrecovery";
+import PrivateRouteRecovery from "../PrivateRoute/privateRouteRecovery";
 
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path="/loginold" element={<LoginOld />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/loginauth" element={<OTPverify />} />
+          <Route path="/login" element={<LoginForm />} />
+          <Route element={<PrivateRouteOTPinput />}>
+            <Route path="/login/otpinput" element={<OTPverify />} />
+          </Route>
+          <Route path="/recovery" element={<RecoveryPassword />} />
+          <Route element={<PrivateRouteRecovery />}>
+            <Route path="/recovery/otpinput" element={<OTPrecovery />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </div>

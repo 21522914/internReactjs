@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import "./loginStyle.css";
-import OTPverify from "./OTPverification";
-import LoginPhoneNumber from "./loginPhoneNumber";
+import OTPverify from "./OTPverify";
 
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -14,11 +13,13 @@ import { Icon } from "react-icons-kit";
 import { eyeOff } from "react-icons-kit/feather/eyeOff";
 import { eye } from "react-icons-kit/feather/eye";
 import CloseButton from "react-bootstrap/CloseButton";
-
 import { FormGroup } from "react-bootstrap";
 
-function Login() {
-  const[loginPage, setLoginPage] = useState(true);
+import { Link, useNavigate } from "react-router-dom";
+
+function LoginForm() {
+  const navigate = useNavigate();
+  const [loginPage, setLoginPage] = useState(true);
   //show/hide password
   const [type, setType] = useState("password");
   const [icon, setIcon] = useState(eyeOff);
@@ -33,7 +34,9 @@ function Login() {
     }
   };
 
-  const handleForgotPass = () => {};
+  const handleForgotPass = () => {
+    return navigate("/recovery");
+  };
   //show/hide notification
   const [isVisible, setIsVisible] = useState(false);
   const [notiText, setNotiText] = useState("Vui lòng nhập Số điện thoại");
@@ -64,6 +67,7 @@ function Login() {
       if (check) {
         console.log("form validated");
         handleLocalStorage();
+        navigate("/login/otpinput");
       }
     }
     if (formData.button === 2) {
@@ -159,12 +163,7 @@ function Login() {
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
                   <Form.Label>Mật khẩu</Form.Label>
-                  <Form.Label
-                    style={{ color: "#0965BA" }}
-                    onClick={handleForgotPass}
-                  >
-                    Quên mật khẩu?
-                  </Form.Label>
+                  <Link to="/recovery">Quên mật khẩu</Link>
                 </div>
                 <InputGroup className="mb-3">
                   <Form.Control
@@ -216,4 +215,4 @@ function Login() {
     </Container>
   );
 }
-export default Login;
+export default LoginForm;
