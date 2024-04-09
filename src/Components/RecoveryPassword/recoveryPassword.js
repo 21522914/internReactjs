@@ -15,7 +15,7 @@ import { Link, useNavigate } from "react-router-dom";
 function RecoveryPassword() {
   //store input value
   const [phoneNumInput, setPhoneNumInput] = useState("");
-  //ref input
+  //focus input
   const inputElementRef = useRef(null);
 
   const naivgate = useNavigate();

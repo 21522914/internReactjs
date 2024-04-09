@@ -1,26 +1,27 @@
-import React, { useState } from "react";
-import "./loginStyle.css";
-import OTPverify from "./OTPverify";
+import React, { useState, useRef } from "react";
+import "../Login/loginStyle.css";
 
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
+import Button from "react-bootstrap/Button";
 
 import { Icon } from "react-icons-kit";
 import { eyeOff } from "react-icons-kit/feather/eyeOff";
 import { eye } from "react-icons-kit/feather/eye";
 import CloseButton from "react-bootstrap/CloseButton";
 import { FormGroup } from "react-bootstrap";
-import Button from "react-bootstrap/Button";
-import { Modal } from "react-bootstrap";
 
 import { Link, useNavigate } from "react-router-dom";
 
-function LoginForm() {
+function ResetPasswordForm() {
   const navigate = useNavigate();
-  const [loginPage, setLoginPage] = useState(true);
+
+  //focus input
+  const inputElementRef = useRef(null);
+
   //show/hide password
   const [type, setType] = useState("password");
   const [icon, setIcon] = useState(eyeOff);
@@ -37,39 +38,35 @@ function LoginForm() {
 
   //show/hide notification
   const [isVisible, setIsVisible] = useState(false);
-  const [notiText, setNotiText] = useState("Vui lòng nhập Số điện thoại");
 
   const toggleVisibility = () => {
-    setIsVisible(true);
+    setIsVisible(false);
   };
 
   //store input value
   const [formData, setFormData] = useState({
-    button: 1,
-    phoneNum: "",
     password: "",
+    confirmPassword: "",
   });
 
   //submit form
   const onSubmit = (e) => {
     e.preventDefault();
-    const name = e.target.name;
-    const value = e.target.value;
-    if (formData.button === 1) {
-      console.log("Button Đăng nhập clicked!");
-      //get data form FORM
-      handleChangeInp(e);
-      console.log(formData);
-      //validate data
-      var check = validateForm(formData);
-      if (check) {
-        console.log("form validated");
-        handleLocalStorage();
-        navigate("/login/otpinput");
-      }
-    }
-    if (formData.button === 2) {
-      console.log("Button Đăng nhập SSO clicked!");
+
+    console.log("Button Hoàn tất clicked!");
+    //get data form FORM
+    handleChangeInp(e);
+    console.log(formData);
+    //validate data
+    var check = validateForm(formData);
+    if (check) {
+      console.log("form validated");
+      handleLocalStorage();
+      navigate("/login");
+    } else {
+      console.log("form not validated");
+      // formData.password = "";
+      // formData.confirmPassword = "";
     }
   };
 
@@ -83,12 +80,8 @@ function LoginForm() {
 
   const validateForm = (data) => {
     var result = true;
-    if (data.phoneNum == "" || !regexPhoneNumber(data.phoneNum)) {
-      toggleVisibility();
-      result = false;
-    } else if (!valiadtePassword(data.password)) {
-      setNotiText("Vui lòng nhập Mật khẩu");
-      toggleVisibility();
+    if(data.password !== data.confirmPassword || !valiadtePassword(data.password)){
+      setIsVisible(true);
       result = false;
     }
     return result;
@@ -102,7 +95,7 @@ function LoginForm() {
     // Contains lowercase
     if (!/[a-z]/.test(password)) result = false;
     // Contains uppercase
-    if (!/[A-Z]/.test(password)) result = false;
+    if (!/[A-Z]/.test(password)) result = false;  
     // Contains numbers
     if (!/\d/.test(password)) result = false;
     // Contains special characters
@@ -110,27 +103,13 @@ function LoginForm() {
     return result;
   };
 
-  const regexPhoneNumber = (phone) => {
-    return /(((\+|)84)|0)(3|5|7|8|9)+([0-9]{8})\b/.test(phone);
-  };
-
   const handleLocalStorage = () => {
-    localStorage.setItem("phoneNumber", formData.phoneNum);
-    localStorage.setItem("password", formData.password);
-  };
-
-  //xử lý modal
-  const passwordReset = JSON.parse(
-    localStorage.getItem("info-recovery-password")
-  );
-
-  const resetPassSuccess = passwordReset ? true : false;
-
-  const [show, setShow] = useState(resetPassSuccess);
-
-  const handleClose = () => {
-    setShow(false);
-    localStorage.removeItem("info-recovery-password");
+    let infoRecoveryPassword = JSON.parse(localStorage.getItem("info-recovery"));
+    infoRecoveryPassword.push({ 'newPassword': formData.password });
+    console.log(infoRecoveryPassword);
+    localStorage.setItem("info-recovery-password", JSON.stringify(infoRecoveryPassword));
+    localStorage.removeItem("info-recovery");
+    localStorage.removeItem("phoneNumberRecovery");
   };
 
   return (
@@ -146,34 +125,23 @@ function LoginForm() {
           </div>
         </Col>
         <Col col="7" className="mb-5" style={{ marginTop: "1rem" }}>
-          {/* Modal */}
-          <div className="text-center">
-            <Modal
-              show={show}
-              onHide={handleClose}
-              backdrop="static"
-              keyboard={false}
-              centered
-              className="text-center"
-            >
-              <Modal.Body>
-                <img src={require("../../Assets/checkicon.png")} alt="noti" />
-                <p style={{marginTop:'10px'}}>Khôi phục mật khẩu thành công!</p>
-                <p style={{ color: "#73777A", fontSize: "12px" }}>
-                  Vui lòng đăng nhập lại với mật khẩu mới
-                </p>
-                <Button variant="danger" onClick={handleClose}>
-                  Xác nhận
-                </Button>
-              </Modal.Body>
-            </Modal>
-          </div>
-          <div className={isVisible ? "visible" : "hidden"}>
+          <div
+            className={isVisible ? "visible" : "hidden"}
+            style={{ width: "75%", marginLeft: "10rem" }}
+          >
             <img src={require("../../Assets/Toast noti.png")} alt="noti" />
-            <span> &nbsp; {notiText} </span>
+            <span>
+              {" "}
+              &nbsp; Mật khẩu mới phải có ít nhất 8 ký tự, bao gồm số, chữ cái
+              thường và chữ cái IN HOA, và phải có ít nhất 1 ký tự đặc biệt
+              ~!@#$%^&*
+            </span>
             <CloseButton
-              style={{ marginLeft: "3.5rem", fontSize: "10px" }}
-              onClick={toggleVisibility}
+              style={{ marginLeft: "20rem", fontSize: "12px" }}
+              onClick={() => {
+                setIsVisible(false);
+                inputElementRef.current.focus();
+              }}
             />
           </div>
           <div className="right-column">
@@ -188,33 +156,13 @@ function LoginForm() {
               </p>
             </div>
             <p style={{ color: "black", fontSize: "28px", fontWeight: "bold" }}>
-              Đăng nhập
+              Khôi phục mật khẩu
             </p>
             <Form className="form-sign-in" onSubmit={onSubmit}>
-              <FormGroup className="mb-3">
-                <Form.Label style={{ textAlign: "left", width: "100%" }}>
-                  Số điện thoại
-                </Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Nhập số điện thoại"
-                  value={formData.phoneNum}
-                  name="phoneNum"
-                  id="phone-number"
-                  style={{ backgroundColor: "#F3F6F9" }}
-                  size="lg"
-                  onChange={handleChangeInp}
-                  onClick={() => setIsVisible(false)}
-                />
-              </FormGroup>
-
               <FormGroup className="mb-3" controlId="form-password">
-                <div
-                  style={{ display: "flex", justifyContent: "space-between" }}
-                >
-                  <Form.Label>Mật khẩu</Form.Label>
-                  <Link to="/recovery">Quên mật khẩu</Link>
-                </div>
+                <Form.Label style={{ textAlign: "left", width: "100%" }}>
+                  Mật khẩu mới
+                </Form.Label>
                 <InputGroup className="mb-3">
                   <Form.Control
                     type={type}
@@ -225,6 +173,30 @@ function LoginForm() {
                     onChange={handleChangeInp}
                     onClick={() => setIsVisible(false)}
                     name="password"
+                    style={{ backgroundColor: "#F3F6F9" }}
+                    size="lg"
+                    ref={inputElementRef}
+                  />
+                  <InputGroup.Text id="eye-icon" onClick={handleToggle}>
+                    <Icon className="absolute mr-10" icon={icon} size={20} />
+                  </InputGroup.Text>
+                </InputGroup>
+              </FormGroup>
+
+              <FormGroup className="mb-3" controlId="form-password-confirm">
+                <Form.Label style={{ textAlign: "left", width: "100%" }}>
+                  Xác nhận mật khẩu mới
+                </Form.Label>
+                <InputGroup className="mb-3">
+                  <Form.Control
+                    type={type}
+                    placeholder="Nhập mật khẩu"
+                    aria-label="Password"
+                    aria-describedby="eye-icon"
+                    value={formData.confirmPassword}
+                    onChange={handleChangeInp}
+                    onClick={() => setIsVisible(false)}
+                    name="confirmPassword"
                     style={{ backgroundColor: "#F3F6F9" }}
                     size="lg"
                   />
@@ -239,17 +211,8 @@ function LoginForm() {
                   className="mb-4 w-100 gradient-custom-2"
                   variant="danger"
                   type="submit"
-                  onClick={() => (formData.button = 1)}
                 >
-                  Đăng nhập
-                </Button>
-                <Button
-                  className="mb-4 w-100 gradient-custom-2"
-                  variant="danger"
-                  type="submit"
-                  onClick={() => (formData.button = 2)}
-                >
-                  Đăng nhập SSO
+                  Hoàn tất
                 </Button>
               </div>
             </Form>
@@ -265,4 +228,4 @@ function LoginForm() {
     </Container>
   );
 }
-export default LoginForm;
+export default ResetPasswordForm;

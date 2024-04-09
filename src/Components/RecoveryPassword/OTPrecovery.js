@@ -8,7 +8,7 @@ import Button from "react-bootstrap/Button";
 
 import CloseButton from "react-bootstrap/CloseButton";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import OtpInput from "react-otp-input";
 
@@ -38,30 +38,17 @@ function OTPrecovery() {
     }
   };
 
-  const handleKeyUp = (e) => {
-    //delete
-    const key = e.key.toLowerCase();
-    if (key == "backspace" || key == "delete") {
-      e.target.value = "";
-      const prev = e.target.previousSibling;
-      // if(prev){
-      //   prev.focus();
-      // }
-      prev.focus();
-      return;
-    }
-  };
+  const navigate = useNavigate();
 
   const [isVisible, setIsVisible] = useState(false);
 
   const handleConfirm = () => {
     //gửi kèm OTP cùng số điện thoại để check
-    const info = [phoneNum, otp];
-    localStorage.setItem("info", JSON.stringify(info));
+    const infoRecovery = [{"phoneNumber" : phoneNum}, {"OTPcode" : otp}];
+    localStorage.setItem("info-recovery", JSON.stringify(infoRecovery));
     //đọc mã OTP input
     alert("OTP input is " + otp);
-    //xoá localstorage
-    //localStorage.clear();
+    navigate("/recovery/newpassword");
   };
 
   return (
@@ -121,8 +108,7 @@ function OTPrecovery() {
                 )}
                 inputType="tel" 
               />
-            </div>
-            
+            </div>            
 
             <p>Không nhận được mã OTP? Gửi lại OTP</p>
             <Button

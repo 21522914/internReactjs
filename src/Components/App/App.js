@@ -12,6 +12,7 @@ import PrivateRouteOTPinput from "../PrivateRoute/privateRouteOTPinput";
 import RecoveryPassword from "../RecoveryPassword/recoveryPassword";
 import OTPrecovery from "../RecoveryPassword/OTPrecovery";
 import PrivateRouteRecovery from "../PrivateRoute/privateRouteRecovery";
+import ResetPasswordForm from "../RecoveryPassword/resetPassword";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/recovery" element={<RecoveryPassword />} />
           <Route element={<PrivateRouteRecovery />}>
             <Route path="/recovery/otpinput" element={<OTPrecovery />} />
+            <Route path="/recovery/newpassword" element={<ResetPasswordForm />} />
           </Route>
         </Routes>
       </BrowserRouter>
